@@ -94,5 +94,5 @@ We welcome contributions! To get started:
 This project is licensed under the MIT License.
 
 ## 📧 Contact
-For any queries or collaboration, reach out to: **yourname@example.com**
+For any queries or collaboration, reach out to: sandhya24102001@gmail.com
 
