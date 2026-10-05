@@ -1,98 +1,107 @@
-# real_estate_lead_management_system
-# AI-Powered Lead Management System for Real Estate
+# AI-Powered Real Estate Lead Scoring
 
-## 🚀 Overview
-The **AI-Powered Lead Management System** helps real estate businesses capture, organize, prioritize, and engage leads efficiently. It leverages **AI-based enrichment, scoring, and automation** to streamline lead handling, ensuring real estate agents focus on high-value prospects while reducing manual efforts.
+A small FastAPI service that retrieves a real-estate lead from a local SQLite database and uses a locally running Ollama model to classify the lead as **Hot**, **Warm**, or **Cold** based on the lead's name and budget.
 
-## 🔥 Key Features
-- **Lead Capture & Deduplication** – Automatically collects leads from multiple sources and removes duplicates.
-- **AI-Powered Lead Enrichment** – Enhances lead data with insights like property preferences and financial standing.
-- **Lead Scoring & Sentiment Analysis** – AI ranks leads based on conversion probability and intent analysis.
-- **Automated Engagement** – Personalized emails, messages, and follow-ups to nurture leads effectively.
-- **Smart Lead Assignment** – Auto-assigns leads to agents based on expertise and availability.
-- **Lead Pipeline Tracking** – A visual dashboard to monitor lead progress, conversion rates, and agent performance.
-- **Seamless API Integration** – Works with existing CRMs, real estate listing platforms, and marketing tools.
+> This README describes the implementation currently present in the repository.
 
-## 🏗️ Tech Stack
-- **Backend:** Flask / FastAPI (Python) for API development
-- **Frontend:** React / Next.js for a responsive UI
-- **Database:** PostgreSQL / MongoDB for storing leads & interactions
-- **AI & ML:** OpenAI, Flowwise.ai, or custom ML models for lead scoring & sentiment analysis
-- **Deployment:** Docker + Render / AWS / GCP
-- **Authentication:** OAuth / JWT for secure user access
+## Current implementation
 
-## 🛠️ Installation & Setup
+The backend exposes a single scoring endpoint:
+
+```text
+GET /score_lead/{email}
+```
+
+The flow is:
+
+1. Look up the lead by email in `leads.db`.
+2. Read the lead's name, email, and budget.
+3. Send the lead information to an Ollama chat model.
+4. Ask the model to classify the lead as `Hot`, `Warm`, or `Cold`.
+5. Return the model's result as JSON.
+
+## Tech Stack
+
+- **Python**
+- **FastAPI**
+- **Pydantic**
+- **SQLite**
+- **Ollama**
+- **Mistral model**
+
+## API
+
+### Score a lead
+
+```http
+GET /score_lead/{email}
+```
+
+Example response:
+
+```json
+{
+  "lead_score": "Hot"
+}
+```
+
+If the email is not present in the database:
+
+```json
+{
+  "message": "Lead not found"
+}
+```
+
+## Local setup
+
 ### Prerequisites
-- Python 3.8+
-- Node.js 16+
-- PostgreSQL / MongoDB
-- Docker (Optional)
 
-### Steps to Run Locally
-#### 1️⃣ Clone the Repository
-```sh
- git clone https://github.com/yourusername/lead-management-system.git
- cd lead-management-system
+- Python 3.x
+- Ollama installed locally
+- The Mistral model available in Ollama
+
+### Install dependencies
+
+Install the Python packages used by the application:
+
+```bash
+pip install fastapi uvicorn pydantic ollama
 ```
 
-#### 2️⃣ Backend Setup
-```sh
- cd backend
- python -m venv venv
- source venv/bin/activate  # On Windows use: venv\Scripts\activate
- pip install -r requirements.txt
- python app.py
+### Start the API
+
+From the repository root:
+
+```bash
+uvicorn backend:app --reload
 ```
 
-#### 3️⃣ Frontend Setup
-```sh
- cd frontend
- npm install
- npm start
+The API will be available at the local address shown by Uvicorn.
+
+## Database
+
+The application expects a SQLite database named:
+
+```text
+leads.db
 ```
 
-#### 4️⃣ Database Setup
-- Set up PostgreSQL or MongoDB
-- Configure database credentials in `.env`
+The current backend expects a `leads` table containing the lead data used by the scoring endpoint.
 
-#### 5️⃣ Running with Docker (Optional)
-```sh
-docker-compose up --build
-```
+## Repository files
 
-## 🚀 API Endpoints
-### Lead Management
-| Method | Endpoint              | Description                     |
-|--------|----------------------|---------------------------------|
-| POST   | `/api/leads`         | Capture a new lead             |
-| GET    | `/api/leads`         | Retrieve all leads             |
-| GET    | `/api/leads/{id}`    | Get a lead by ID               |
-| PUT    | `/api/leads/{id}`    | Update lead details            |
-| DELETE | `/api/leads/{id}`    | Remove a lead                  |
+- `backend.py` — FastAPI application and AI scoring logic
+- `querry.py` — simple SQLite query utility for inspecting stored leads
+- `test.py` — experimental OpenAI API test
+- `leads.db` — current SQLite database
 
-### AI-Based Features
-| Method | Endpoint              | Description                     |
-|--------|----------------------|---------------------------------|
-| POST   | `/api/lead-score`    | AI-based lead scoring          |
-| POST   | `/api/sentiment`     | Sentiment analysis of a lead   |
+## Notes
 
-## 🌟 Future Enhancements
-- Integration with **WhatsApp & SMS automation**
-- **Real-time analytics dashboard**
-- AI-driven **next-best-action recommendations**
-- **Voice-to-text AI** for logging lead conversations
+The project currently focuses on the core AI lead-scoring flow. Features such as a full lead-management dashboard, automated outreach, multi-source ingestion, and production authentication are **not currently implemented in the repository**.
 
-## 🤝 Contributing
-We welcome contributions! To get started:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-branch`)
-3. Commit your changes (`git commit -m "Added new feature"`)
-4. Push to your branch (`git push origin feature-branch`)
-5. Open a **Pull Request**
+## Author
 
-## 📜 License
-This project is licensed under the MIT License.
+**Sandhya Sharma**
 
-## 📧 Contact
-For any queries or collaboration, reach out to: sandhya24102001@gmail.com
-
+[GitHub](https://github.com/sandhyasharma24)
